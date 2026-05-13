@@ -19,6 +19,12 @@ def print_banner() -> None:
     banner = pyfiglet.figlet_format(BANNER_TEXT, font=BANNER_FONT)
     print(Fore.RED + Style.BRIGHT + banner)
     print(Fore.CYAN + " " * 8 + "Advanced Recon & OSINT Framework | Coded by Vigilante\n")
+    try:
+        from src.updater import update_available
+        if update_available:
+            print(Fore.YELLOW + Style.BRIGHT + "  ⚡ Güncelleme mevcut! Yüklemek için [U] tuşuna basın.\n")
+    except ImportError:
+        pass
     print(Fore.YELLOW + "-" * 65 + "\n")
 
 

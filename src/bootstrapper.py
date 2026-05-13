@@ -33,3 +33,8 @@ def bootstrapper() -> None:
             sys.exit(1)
 
     os.execv(venv_python, [venv_python] + sys.argv)
+
+
+def post_bootstrap() -> None:
+    from src.updater import check_updates
+    check_updates(auto=True)

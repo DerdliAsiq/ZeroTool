@@ -3,10 +3,11 @@ import time
 
 from colorama import Fore, Style
 
-from src.bootstrapper import bootstrapper
+from src.bootstrapper import bootstrapper, post_bootstrap
 from src.utils import print_banner, get_target_info, separator, pause
 from src.recon import get_whois, get_subdomains, get_dns_records
 from src.scanner import scan_and_fingerprint
+from src.deepinfo import deep_info_gathering
 from src.waf_detector import detect_waf
 from src.dirbuster import find_admin_panels
 
@@ -15,6 +16,8 @@ bootstrapper()
 import urllib3  # noqa: E402
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+post_bootstrap()
+
 
 def main_menu() -> None:
     while True:
@@ -22,15 +25,20 @@ def main_menu() -> None:
         print(Fore.WHITE + Style.BRIGHT + "[ Operasyon Seçimi ]\n")
         print(Fore.GREEN + "  [1] Pasif İstihbarat (OSINT)")
         print(Fore.RED + "  [2] Aktif Tarama (Scanner)")
-        print(Fore.MAGENTA + "  [3] Agresif Analiz (Tam Kapsam)")
+        print(Fore.MAGENTA + "  [3] Derin Bilgi Toplama (Deep Info)")
         print(Fore.YELLOW + "  [4] WAF Kalkan Tespiti")
         print(Fore.YELLOW + "  [5] Admin Panel Bulucu")
+        print(Fore.CYAN + "  [U] Güncellemeleri Kontrol Et & Yükle")
         print(Fore.CYAN + "  [X] Operasyonu Sonlandır\n")
 
         choice = input(Fore.CYAN + "Vigilante@ZeroDay:~$ " + Fore.WHITE).strip().upper()
 
         if choice == 'X':
             sys.exit(0)
+
+        elif choice == 'U':
+            from src.updater import apply_updates
+            apply_updates()
 
         elif choice in ('1', '2', '3', '4', '5'):
             target, target_ip = get_target_info()
@@ -51,11 +59,7 @@ def main_menu() -> None:
             elif choice == '2':
                 scan_and_fingerprint(target, target_ip)
             elif choice == '3':
-                if target != target_ip:
-                    get_whois(target)
-                    get_subdomains(target)
-                    get_dns_records(target)
-                scan_and_fingerprint(target, target_ip)
+                deep_info_gathering(target, target_ip)
             elif choice == '4':
                 detect_waf(target)
             elif choice == '5':
